@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>XNXX COM — Free and Simple Video Hosting</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+
+    <link rel="icon" href="https://videy.co/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- ===== CSS ASLI (DITAMBAH NAVBAR SAJA) ===== -->
+    <style>
+      html,
+      body {
+        margin: 0;
+        font-family: system-ui;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* NAVBAR */
+      .navbar {
+        background: #fff;
+        border-bottom: 4px solid #000;
+        padding: 12px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      .logo {
+        font-family: Poppins;
+        font-size: 26px;
+        font-weight: 600;
+      }
+      .nav-menu {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      /* VIDEO */
+      .video {
+        display: flex;
+        justify-content: center;
+      }
+      video {
+        max-height: calc(100vh - 64px);
+        width: 100%;
+      }
+
+      .video-title {
+        text-align: center;
+        margin: 16px auto 0;
+        max-width: 720px;
+        padding: 0 16px;
+      }
+      .video-title h1 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .video-actions {
+        display: flex;
+        justify-content: center;
+        padding: 16px 0;
+      }
+      .video-actions-inner {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .action-btn {
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+      }
+      .action-btn-share {
+        background: #1da1f2;
+        color: #fff;
+      }
+      .action-btn-download {
+        background: #10b981;
+        color: #fff;
+      }
+      .action-btn-report {
+        background: #ef4444;
+        color: #fff;
+      }
+
+      /* RELATED */
+      .related-videos {
+        padding: 16px;
+      }
+      .related-videos h2 {
+        font-size: 28px;
+        margin-bottom: 24px;
+      }
+      .related-videos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      .related-video {
+        display: flex;
+        flex-direction: column;
+        transition: 0.2s;
+      }
+      .related-video:hover {
+        transform: translateY(-4px);
+      }
+      .related-video-thumbnail {
+        height: 180px;
+        background: #000;
+      }
+      .related-video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .related-video-title {
+        font-size: 14px;
+        padding: 6px;
+      }
+
+      /* FOOTER */
+      .footer {
+        margin-top: auto;
+        padding: 24px;
+        border-top: 1px solid #eee;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      /* MOBILE */
+      @media (max-width: 768px) {
+        .related-videos-grid {
+          grid-template-columns: 1fr;
+        }
+        .hamburger {
+          display: block;
+        }
+        .nav-menu {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background: #fff;
+          flex-direction: column;
+          display: none;
+          border-bottom: 2px solid #000;
+        }
+        .nav-menu a {
+          padding: 14px;
+          text-align: center;
+          border-top: 1px solid #eee;
+        }
+        .nav-menu.active {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- NAVBAR (SAMA DENGAN INDEX) -->
+      <nav class="navbar">
+        <div class="logo"><a href="index.html">XNXX COM</a></div>
+
+        <button class="hamburger" id="hamburger">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-menu" id="navMenu">
+          <a href="/">Home</a>
+          <a href="https://t.me/H9STREAM" target="_blank">Telegram</a>
+        </div>
+      </nav>
+
+      <!-- VIDEO -->
+      <div class="video">
+        <video id="videoPlayer" controls autoplay playsinline></video>
+      </div>
+
+      <!-- TITLE -->
+      <div class="video-title">
+        <h1 id="videoTitle">Loading...</h1>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="video-actions">
+        <div class="video-actions-inner">
+          <button class="action-btn action-btn-share" id="shareBtn">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <a id="downloadLink" target="_blank">
+            <button class="action-btn action-btn-download">
+              <i class="fas fa-download"></i> Download
+            </button>
+          </a>
+          <button class="action-btn action-btn-report">
+            <i class="fas fa-flag"></i> Report
+          </button>
+        </div>
+      </div>
+
+      <!-- RELATED -->
+      <div class="related-videos">
+        <h2>Related Videos</h2>
+        <div class="related-videos-grid" id="relatedGrid"></div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <div>© 2025 videy.co</div>
+        <div>Terms · Report</div>
+      </div>
+    </div>
+
+    <!-- ================= JS LOGIC ================= -->
+    <script>
+      /* NAVBAR */
+      const hamburger = document.getElementById("hamburger");
+      const navMenu = document.getElementById("navMenu");
+      hamburger.onclick = () => {
+        navMenu.classList.toggle("active");
+        hamburger.querySelector("i").classList.toggle("fa-bars");
+        hamburger.querySelector("i").classList.toggle("fa-times");
+      };
+
+      /* VIDEO LOGIC */
+      const videoId = new URLSearchParams(location.search).get("v");
+
+      fetch("db.json")
+        .then((r) => r.json())
+        .then((db) => {
+          const video = db.find((v) => v.id === videoId);
+
+          if (!video) {
+            document.getElementById("videoTitle").innerText = "Video not found";
+            return;
+          }
+
+          document.title = video.title + " - XNXX COM";
+          document.getElementById("videoTitle").innerText = video.title;
+          document.getElementById("videoPlayer").src = video.mp4;
+          document.getElementById("downloadLink").href = video.mp4;
+
+          /* SHARE */
+          document.getElementById("shareBtn").onclick = () => {
+            if (navigator.share) {
+              navigator.share({ title: video.title, url: location.href });
+            } else {
+              navigator.clipboard.writeText(location.href);
+              alert("Link copied");
+            }
+          };
+
+          /* RELATED */
+          const related = db.filter((v) => v.id !== videoId).slice(0, 12);
+          const grid = document.getElementById("relatedGrid");
+
+          related.forEach((v) => {
+            grid.innerHTML += `
+            <a class="related-video" href="watch.html?v=${v.id}">
+                <div class="related-video-thumbnail">
+                    <img src="${v.thumb}" loading="lazy">
+                </div>
+                <div class="related-video-title">${v.title}</div>
+            </a>
+        `;
+          });
+        });
+    </script>
+  </body>
+</html>

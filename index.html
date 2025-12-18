@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>XNXX COM — Free and Simple Video Hosting</title>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+
+    <link rel="icon" type="image/x-icon" href="https://videy.co/favicon.ico" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* === CSS ASLI (TIDAK DIUBAH) === */
+      html,
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .navbar {
+        background: #fff;
+        border-bottom: 4px solid #000;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+      }
+
+      .navbar {
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-menu {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .nav-menu a {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 22px;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      /* MOBILE */
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        .nav-menu {
+          position: absolute;
+          top: 60px;
+          left: 0;
+          width: 100%;
+          background: #fff;
+          flex-direction: column;
+          gap: 0;
+          border-bottom: 2px solid #000;
+          display: none;
+        }
+
+        .nav-menu a {
+          padding: 14px;
+          width: 100%;
+          border-top: 1px solid #eee;
+          text-align: center;
+        }
+
+        .nav-menu.active {
+          display: flex;
+        }
+      }
+
+      .logo {
+        font-family: Poppins;
+        font-size: 26px;
+        font-weight: 600;
+      }
+
+      .related-videos {
+        max-width: 1280px;
+        padding: 0 16px;
+        margin: 24px auto;
+      }
+
+      .related-videos h2 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      .related-videos-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .related-video {
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s;
+      }
+
+      .related-video:hover {
+        transform: translateY(-4px);
+      }
+
+      .related-video-thumbnail {
+        height: 180px;
+        overflow: hidden;
+        background: #000;
+      }
+
+      .related-video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .related-video-title {
+        padding: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 1024px) {
+        .related-videos-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 600px) {
+        .related-videos-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .pagination {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .pagination a {
+        display: inline-block;
+        padding: 6px 12px;
+        margin: 0 4px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      .pagination .active {
+        background: #000;
+        color: #fff;
+      }
+
+      .footer {
+        margin-top: auto;
+        padding: 24px 16px;
+        border-top: 1px solid #e5e5e5;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- NAVBAR -->
+      <nav class="navbar">
+        <div class="logo">
+          <a href="/v">XNXX COM</a>
+        </div>
+
+        <button class="hamburger" id="hamburger">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-menu" id="navMenu">
+          <a href="#">Home</a>
+          <a href="https://t.me/H9STREAM" target="_blank">Telegram</a>
+        </div>
+      </nav>
+
+      <!-- ===== LATEST JAV VIDEOS (NO PAGINATION) ===== -->
+      <div class="related-videos">
+        <h2>Latest JAV Videos</h2>
+        <div class="related-videos-grid" id="javGrid"></div>
+      </div>
+
+      <!-- ===== LATEST VIDEOS (WITH PAGINATION) ===== -->
+      <div class="related-videos">
+        <h2>Latest Videos</h2>
+        <div class="related-videos-grid" id="normalGrid"></div>
+        <div class="pagination" id="normalPagination"></div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <div>Copyright © 2025 videy.co</div>
+        <div><a href="#">Terms</a> · <a href="#">Report</a></div>
+      </div>
+    </div>
+
+    <!-- ================= JS STATIC ================= -->
+    <script>
+      const PER_PAGE = 12;
+      const page = parseInt(
+        new URLSearchParams(location.search).get("page") || "1"
+      );
+
+      fetch("db.json")
+        .then((res) => res.json())
+        .then((db) => {
+          /* ===== JAV VIDEOS (NO PAGINATION) ===== */
+          const javGrid = document.getElementById("javGrid");
+          db.filter((v) => v.category === "jav").forEach((v) => {
+            javGrid.innerHTML += `
+            <a class="related-video" href="watch.html?v=${v.id}">
+                <div class="related-video-thumbnail">
+                    <img src="${v.thumb}" alt="${v.title}">
+                </div>
+                <div class="related-video-title">${v.title}</div>
+            </a>
+        `;
+          });
+
+          /* ===== LATEST VIDEOS (PAGINATION) ===== */
+          const normal = db.filter((v) => v.category === "normal");
+          const totalPage = Math.ceil(normal.length / PER_PAGE);
+          const start = (page - 1) * PER_PAGE;
+          const slice = normal.slice(start, start + PER_PAGE);
+
+          const normalGrid = document.getElementById("normalGrid");
+          slice.forEach((v) => {
+            normalGrid.innerHTML += `
+            <a class="related-video" href="watch.html?v=${v.id}">
+                <div class="related-video-thumbnail">
+                    <img src="${v.thumb}" alt="${v.title}">
+                </div>
+                <div class="related-video-title">${v.title}</div>
+            </a>
+        `;
+          });
+
+          /* ===== PAGINATION UI ===== */
+          const pager = document.getElementById("normalPagination");
+          for (let i = 1; i <= totalPage; i++) {
+            pager.innerHTML += `
+            <a href="?page=${i}" class="${i === page ? "active" : ""}">
+                ${i}
+            </a>
+        `;
+          }
+        });
+    </script>
+  </body>
+</html>
