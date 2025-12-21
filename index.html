@@ -248,8 +248,62 @@
         <div><a href="#">Terms</a> · <a href="#">Report</a></div>
       </div>
     </div>
+    <script>
+      function renderPagination(container, current, total) {
+        let html = "";
 
-    <!-- ================= JS STATIC ================= -->
+        const createLink = (p, text = p, active = false, disabled = false) => {
+          if (disabled) return `<a class="disabled">${text}</a>`;
+          return `<a href="?page=${p}" class="${
+            active ? "active" : ""
+          }">${text}</a>`;
+        };
+
+        /* Prev */
+        html +=
+          current > 1
+            ? createLink(current - 1, "&lt;")
+            : `<a class="disabled">&lt;</a>`;
+
+        /* Page 1 */
+        html += createLink(1, "1", current === 1);
+
+        /* Dots before */
+        if (current > 3) {
+          html += `<span class="dots">...</span>`;
+        }
+
+        /* Middle pages */
+        for (
+          let p = Math.max(2, current - 1);
+          p <= Math.min(total - 1, current + 1);
+          p++
+        ) {
+          if (p === 1 || p === total) continue;
+          html += createLink(p, p, p === current);
+        }
+
+        /* Dots after */
+        if (current < total - 2) {
+          html += `<span class="dots">...</span>`;
+        }
+
+        /* Last page */
+        if (total > 1) {
+          html += createLink(total, total, current === total);
+          html += createLink(total, "Last");
+        }
+
+        /* Next */
+        html +=
+          current < total
+            ? createLink(current + 1, "&gt;")
+            : `<a class="disabled">&gt;</a>`;
+
+        container.innerHTML = html;
+      }
+    </script>
+
     <script>
       const PER_PAGE = 12;
       const page = parseInt(
@@ -259,48 +313,44 @@
       fetch("db.json")
         .then((res) => res.json())
         .then((db) => {
-          /* ===== JAV VIDEOS (NO PAGINATION) ===== */
+          /* JAV */
           const javGrid = document.getElementById("javGrid");
           db.filter((v) => v.category === "jav").forEach((v) => {
             javGrid.innerHTML += `
-            <a class="related-video" href="watch.html?v=${v.id}">
-                <div class="related-video-thumbnail">
-                    <img src="${v.thumb}" alt="${v.title}" loading="lazy">
-                </div>
-                <div class="related-video-title">${v.title}</div>
-            </a>
-        `;
+        <a class="related-video" href="watch.html?v=${v.id}">
+          <div class="related-video-thumbnail">
+            <img src="${v.thumb}" alt="${v.title}" loading="lazy">
+          </div>
+          <div class="related-video-title">${v.title}</div>
+        </a>
+      `;
           });
 
-          /* ===== LATEST VIDEOS (PAGINATION) ===== */
+          /* NORMAL + PAGINATION */
           const normal = db.filter((v) => v.category === "normal");
           const totalPage = Math.ceil(normal.length / PER_PAGE);
+
           const start = (page - 1) * PER_PAGE;
           const slice = normal.slice(start, start + PER_PAGE);
 
           const normalGrid = document.getElementById("normalGrid");
           slice.forEach((v) => {
             normalGrid.innerHTML += `
-            <a class="related-video" href="watch.html?v=${v.id}">
-                <div class="related-video-thumbnail">
-                    <img src="${v.thumb}" alt="${v.title}">
-                </div>
-                <div class="related-video-title">${v.title}</div>
-            </a>
-        `;
+        <a class="related-video" href="watch.html?v=${v.id}">
+          <div class="related-video-thumbnail">
+            <img src="${v.thumb}" alt="${v.title}">
+          </div>
+          <div class="related-video-title">${v.title}</div>
+        </a>
+      `;
           });
 
-          /* ===== PAGINATION UI ===== */
+          /* ✅ PAGINATION */
           const pager = document.getElementById("normalPagination");
-          for (let i = 1; i <= totalPage; i++) {
-            pager.innerHTML += `
-            <a href="?page=${i}" class="${i === page ? "active" : ""}">
-                ${i}
-            </a>
-        `;
-          }
+          renderPagination(pager, page, totalPage);
         });
     </script>
+
     <script
       type="text/javascript"
       src="https://pl28280943.effectivegatecpm.com/4b/f4/c0/4bf4c029a4eb5cfb8f8f2fe4f6fc04ae.js"
